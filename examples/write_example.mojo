@@ -5,7 +5,7 @@ This example demonstrates how to build configuration data and write it to INI fo
 Run with: mojo -I src examples/write_example.mojo
 """
 
-from ini.writer import to_ini
+from ini import to_ini
 
 
 fn main() raises:

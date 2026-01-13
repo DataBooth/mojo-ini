@@ -5,7 +5,7 @@ This example demonstrates how to parse INI files and access configuration values
 Run with: mojo -I src examples/read_example.mojo
 """
 
-from ini.parser import parse
+from ini import parse
 
 
 fn main() raises:
