@@ -1,6 +1,6 @@
 # mojo-ini v0.2.0 - Native INI Parser
 
-I've released **mojo-ini**, a native INI file parser and writer for Mojo with Python `configparser` compatibility and zero dependencies.
+From the author (@mjboothaus) of [mojo-dotenv](https://github.com/databooth/mojo-dotenv) and [mojo-toml](https://github.com/databooth/mojo-toml) comes **mojo-ini**, a native INI file parser and writer for Mojo with Python `configparser` compatibility and zero dependencies.
 
 ## What it does
 
