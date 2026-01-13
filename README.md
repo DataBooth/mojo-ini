@@ -17,14 +17,14 @@ Parse and write INI configuration files in native Mojo with zero Python dependen
 - ✅ **Comprehensive Tests** - Full test coverage
 - ✅ **Zero Dependencies** - Pure Mojo implementation
 
-**Status**: 🚧 **In Development** - v0.1.0 coming soon
+**Status**: ✅ **v0.1.0 Released** - Production ready
 
 ## Quick Start
 
 **Parsing INI Files:**
 
 ```mojo
-from ini.parser import parse
+from ini import parse
 
 var config = parse("""
 [Database]
@@ -46,7 +46,7 @@ print(config["Server"]["debug"])     # true
 **Writing INI Files:**
 
 ```mojo
-from ini.writer import to_ini
+from ini import to_ini
 
 var data = Dict[String, Dict[String, String]]()
 data["App"] = Dict[String, String]()
@@ -93,7 +93,7 @@ cp -r mojo-ini/src/ini your-project/lib/ini
 ### Basic Parsing
 
 ```mojo
-from ini.parser import parse
+from ini import parse
 
 var config = parse("""
 [DEFAULT]
@@ -110,24 +110,43 @@ print(config["API"]["timeout"])   # 30
 
 ### File I/O
 
-> ⚠️ **Coming in v0.1.0** - File I/O convenience functions not yet implemented. Use Mojo's built-in file operations for now:
-
 ```mojo
-from ini.parser import parse
-from ini.writer import to_ini
+from ini import parse_file, write_file
 
 # Read from file
-with open("config.ini", "r") as f:
-    var content = f.read()
-    var config = parse(content)
+var config = parse_file("config.ini")
 
 # Modify
 config["Server"]["port"] = "8080"
 
 # Write back
-with open("config.ini", "w") as f:
-    f.write(to_ini(config))
+write_file("config.ini", config)
 ```
+
+See `examples/file_io_example.mojo` for a complete example.
+
+### Multiline Values
+
+Indented lines are treated as continuations (Python configparser behavior):
+
+```mojo
+from ini import parse
+
+var config = parse("""
+[Database]
+connection_string = postgresql://host:5432/db
+    ?sslmode=require
+    &timeout=10
+""")
+
+# Result: connection_string contains all three lines with newlines
+print(config["Database"]["connection_string"])
+# postgresql://host:5432/db
+# ?sslmode=require
+# &timeout=10
+```
+
+**Important:** Lines starting with whitespace are ALWAYS treated as continuations, not as new keys. This matches Python `configparser` behavior.
 
 ### Python configparser Compatibility
 
@@ -136,7 +155,7 @@ with open("config.ini", "w") as f:
 For now, all values are strings. Manual conversion:
 
 ```mojo
-from ini.parser import parse
+from ini import parse
 
 var config = parse("...")
 
@@ -161,6 +180,35 @@ var timeout = float64(config["API"]["timeout"])            # Float64
 - Type conversion helpers (getint, getboolean, etc.)
 - Case-insensitive section/key names (optional)
 
+## Known Limitations
+
+### Indented Keys Not Supported
+
+**By design**, keys with leading whitespace are treated as multiline value continuations:
+
+```ini
+# ❌ This does NOT create a key named "indented_key"
+[Section]
+key1 = value1
+  indented_key = value2  # This becomes part of key1's value!
+```
+
+This matches Python `configparser` behavior. If you need indented keys, consider:
+- **TOML**: Native support for nested tables ([mojo-toml](https://github.com/databooth/mojo-toml))
+- **YAML**: Indentation-based structure
+- **Remove indentation**: Keep all keys at column 0
+
+### Tab-Indented Keys (Git Config Style)
+
+Git config files use tabs before keys, which mojo-ini treats as continuations. To use Git configs:
+
+```bash
+# Convert tabs to standard format
+sed 's/^\t//' .git/config > config.ini
+```
+
+Or manually remove leading tabs from keys.
+
 ## Python Compatibility
 
 mojo-ini aims for high compatibility with Python's `configparser`:
@@ -173,7 +221,7 @@ mojo-ini aims for high compatibility with Python's `configparser`:
 | Multiline values | ✅ | ✅ |
 | Inline comments | ✅ | ✅ |
 | Value interpolation | ✅ | 🚧 Planned |
-| Type converters | ✅ | ✅ |
+|| Type converters | ✅ | 🚧 Planned |
 | Case insensitive | ✅ | 🚧 Planned |
 
 ## Development
