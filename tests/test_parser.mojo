@@ -9,7 +9,7 @@ Tests parsing of INI syntax into nested dictionaries:
 - Empty values
 """
 
-from testing import assert_equal, assert_true
+from testing import assert_equal, assert_true, TestSuite
 from ini.parser import parse
 
 
@@ -142,37 +142,5 @@ key2: value2"""
 
 
 fn main() raises:
-    """Run all parser tests."""
-    print("Running INI parser tests...")
-    
-    test_empty_ini()
-    print("✓ test_empty_ini")
-    
-    test_single_section_single_key()
-    print("✓ test_single_section_single_key")
-    
-    test_single_section_multiple_keys()
-    print("✓ test_single_section_multiple_keys")
-    
-    test_multiple_sections()
-    print("✓ test_multiple_sections")
-    
-    test_keys_without_section()
-    print("✓ test_keys_without_section")
-    
-    test_empty_value()
-    print("✓ test_empty_value")
-    
-    test_comments_ignored()
-    print("✓ test_comments_ignored")
-    
-    test_whitespace_trimming()
-    print("✓ test_whitespace_trimming")
-    
-    test_duplicate_key_error()
-    print("✓ test_duplicate_key_error")
-    
-    test_colon_separator()
-    print("✓ test_colon_separator")
-    
-    print("\nAll parser tests passed! ✓")
+    """Run all parser tests using TestSuite."""
+    TestSuite.discover_tests[__functions_in_module()]().run()

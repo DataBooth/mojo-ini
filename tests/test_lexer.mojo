@@ -8,7 +8,7 @@ Tests tokenisation of INI syntax elements:
 - Error cases
 """
 
-from testing import assert_equal, assert_true, assert_raises
+from testing import assert_equal, assert_true, TestSuite
 from ini.lexer import Lexer, Token, TokenKind, Position
 
 
@@ -115,34 +115,5 @@ port = 5432"""
 
 
 fn main() raises:
-    """Run all lexer tests."""
-    print("Running INI lexer tests...")
-    
-    test_empty_input()
-    print("✓ test_empty_input")
-    
-    test_simple_section()
-    print("✓ test_simple_section")
-    
-    test_key_value_equals()
-    print("✓ test_key_value_equals")
-    
-    test_hash_comment()
-    print("✓ test_hash_comment")
-    
-    test_semicolon_comment()
-    print("✓ test_semicolon_comment")
-    
-    test_section_with_newline()
-    print("✓ test_section_with_newline")
-    
-    test_position_tracking()
-    print("✓ test_position_tracking")
-    
-    test_unclosed_section_error()
-    print("✓ test_unclosed_section_error")
-    
-    test_multiline_ini()
-    print("✓ test_multiline_ini")
-    
-    print("\nAll lexer tests passed! ✓")
+    """Run all lexer tests using TestSuite."""
+    TestSuite.discover_tests[__functions_in_module()]().run()

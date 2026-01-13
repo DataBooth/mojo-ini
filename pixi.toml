@@ -16,6 +16,7 @@ mojo-version = "mojo --version"
 test-lexer = "mojo -I src tests/test_lexer.mojo"
 test-parser = "mojo -I src tests/test_parser.mojo"
 test-writer = "mojo -I src tests/test_writer.mojo"
+test-fixtures = "mojo -I src tests/test_fixtures.mojo"
 test-configparser = "mojo -I src tests/test_configparser_compat.mojo"
 
 # Run all tests (auto-discovers test_*.mojo files)
