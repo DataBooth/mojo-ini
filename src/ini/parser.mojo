@@ -32,10 +32,10 @@ from .lexer import Token, TokenKind, Lexer
 
 struct Parser:
     """Parser for INI token streams.
-    
+
     Converts lexer tokens into Dict[String, Dict[String, String]] structure.
     Each top-level key is a section name, and its value is a dict of key-value pairs.
-    
+
     Usage:
         var lexer = Lexer("[Server]\nhost = localhost")
         var tokens = lexer.tokenize()
@@ -48,7 +48,7 @@ struct Parser:
 
     fn __init__(out self, var tokens: List[Token]):
         """Initialize parser with token list.
-        
+
         Args:
             tokens: Token list from lexer.
         """
@@ -57,7 +57,7 @@ struct Parser:
 
     fn current(self) -> Token:
         """Get current token without advancing.
-        
+
         Returns:
             Current token or EOF if at end.
         """
@@ -82,11 +82,11 @@ struct Parser:
 
     fn parse(mut self) raises -> Dict[String, Dict[String, String]]:
         """Parse tokens into nested dictionary structure.
-        
+
         Returns:
             Dict mapping section names to key-value dictionaries.
             Sections are always present (even if only keys without a [section] header exist).
-        
+
         Raises:
             Error: If syntax is invalid or duplicate keys exist.
         """
@@ -124,19 +124,35 @@ struct Parser:
                     raise Error("Expected '=' after key '" + key + "' at line " + String(token.pos.line))
                 self.advance()
 
-                # Expect VALUE
-                if self.current().kind != TokenKind.VALUE():
-                    # Empty value is allowed
-                    result[current_section][key] = ""
-                else:
-                    var value = self.current().value
+                # Expect VALUE (could be empty)
+                var value = String("")
+                if self.current().kind == TokenKind.VALUE():
+                    value = self.current().value
                     self.advance()
-                    
-                    # Check for duplicate key in current section
-                    if key in result[current_section]:
-                        raise Error("Duplicate key '" + key + "' in section [" + current_section + "] at line " + String(token.pos.line))
-                    
-                    result[current_section][key] = value
+
+                # Handle multiline values: collect continuation lines
+                # A continuation line is a VALUE token preceded only by NEWLINE/COMMENT
+                # (i.e., not preceded by KEY or SECTION)
+                var continuation_buffer = value
+                while self.pos < len(self.tokens):
+                    # Skip newlines and comments
+                    self.skip_newlines()
+                    self.skip_comments()
+
+                    # Check if next token is a continuation (VALUE not preceded by KEY)
+                    if self.current().kind == TokenKind.VALUE():
+                        # This is a continuation line
+                        continuation_buffer = continuation_buffer + "\n" + self.current().value
+                        self.advance()
+                    else:
+                        # Not a continuation, restore position
+                        break
+
+                # Check for duplicate key in current section
+                if key in result[current_section]:
+                    raise Error("Duplicate key '" + key + "' in section [" + current_section + "] at line " + String(token.pos.line))
+
+                result[current_section][key] = continuation_buffer
 
             # Unexpected token
             else:
@@ -147,18 +163,18 @@ struct Parser:
 
 fn parse(content: String) raises -> Dict[String, Dict[String, String]]:
     """Parse INI string into nested dictionary.
-    
+
     Convenience function that handles lexing and parsing in one step.
-    
+
     Args:
         content: INI formatted string.
-    
+
     Returns:
         Dict mapping section names to key-value pairs.
-    
+
     Raises:
         Error: If INI syntax is invalid.
-    
+
     Example:
         ```mojo
         var data = parse("[Database]\nhost = localhost\nport = 5432")

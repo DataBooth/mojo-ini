@@ -40,7 +40,7 @@ from collections import List
 @register_passable("trivial")
 struct Position:
     """Position in the source file (line and column).
-    
+
     Used for error messages to show users exactly where parsing failed.
     Example: "Error at line 5, column 12: unexpected character"
     """
@@ -55,7 +55,7 @@ struct Position:
 @register_passable("trivial")
 struct TokenKind:
     """Token types for INI lexer.
-    
+
     INI is simpler than TOML - no arrays, no inline tables, just flat key-value pairs.
     """
     var _value: Int
@@ -120,7 +120,7 @@ struct TokenKind:
 
 struct Token(Copyable, Movable):
     """A token in the INI input stream.
-    
+
     Represents a single meaningful unit of INI syntax with its type,
     content, and location in the source file.
     """
@@ -140,7 +140,7 @@ struct Token(Copyable, Movable):
 
 struct Lexer:
     """Tokeniser for INI input.
-    
+
     The lexer scans INI text character-by-character and produces a stream
     of tokens. It handles:
     - Section headers [name]
@@ -148,7 +148,7 @@ struct Lexer:
     - Comments (# and ;)
     - Multiline values (indented continuation)
     - Position tracking for error messages
-    
+
     Usage:
         var lexer = Lexer("[Section]\nkey = value")
         var tokens = lexer.tokenize()  # Returns List[Token]
@@ -161,7 +161,7 @@ struct Lexer:
 
     fn __init__(out self, input: String):
         """Initialise lexer with INI input.
-        
+
         Args:
             input: INI content to tokenise.
         """
@@ -172,7 +172,7 @@ struct Lexer:
 
     fn current(self) -> String:
         """Get current character without advancing.
-        
+
         Returns:
             Current character or empty string if at EOF.
         """
@@ -182,10 +182,10 @@ struct Lexer:
 
     fn peek(self, offset: Int = 1) -> String:
         """Look ahead at character without consuming it.
-        
+
         Args:
             offset: Number of characters to look ahead (default: 1).
-        
+
         Returns:
             Character at pos + offset or empty string if out of bounds.
         """
@@ -196,9 +196,9 @@ struct Lexer:
 
     fn advance(mut self) -> String:
         """Consume and return current character.
-        
+
         Advances position and updates line/column tracking for error messages.
-        
+
         Returns:
             Current character or empty string if at EOF.
         """
@@ -218,7 +218,7 @@ struct Lexer:
 
     fn skip_whitespace(mut self):
         """Skip whitespace characters (space, tab) but not newlines.
-        
+
         Newlines are significant in INI for separating key-value pairs.
         """
         while self.pos < len(self.input):
@@ -230,10 +230,10 @@ struct Lexer:
 
     fn read_comment(mut self) raises -> Token:
         """Read a comment starting with # or ;.
-        
+
         Comments run from # (or ;) to end of line.
         Example: key = value  # This is a comment
-        
+
         Returns:
             Comment token (excluding the # or ; character).
         """
@@ -252,10 +252,10 @@ struct Lexer:
 
     fn read_section(mut self) raises -> Token:
         """Read a section header [section_name].
-        
+
         Returns:
             SECTION token with section name (without brackets).
-        
+
         Raises:
             Error: If section not properly closed with ].
         """
@@ -277,7 +277,7 @@ struct Lexer:
 
     fn read_key(mut self) raises -> Token:
         """Read a key name until = or :.
-        
+
         Returns:
             KEY token with trimmed key name.
         """
@@ -294,9 +294,9 @@ struct Lexer:
 
     fn read_value(mut self) raises -> Token:
         """Read a value after = or :.
-        
+
         Handles inline comments (# or ; at end of line).
-        
+
         Returns:
             VALUE token with trimmed value (excluding inline comments).
         """
@@ -316,16 +316,22 @@ struct Lexer:
 
     fn tokenize(mut self) raises -> List[Token]:
         """Tokenise the entire INI input.
-        
+
         Returns:
             List of tokens representing the INI structure.
-        
+
         Raises:
             Error: If syntax is invalid.
         """
         var tokens = List[Token]()
+        var at_line_start = True  # Track if we're at the beginning of a line
 
         while self.pos < len(self.input):
+            # Check for leading whitespace (indicates continuation line)
+            var has_leading_whitespace = False
+            if at_line_start and (self.current() == " " or self.current() == "\t"):
+                has_leading_whitespace = True
+
             self.skip_whitespace()
 
             if self.pos >= len(self.input):
@@ -337,14 +343,17 @@ struct Lexer:
             if c == "\n":
                 tokens.append(Token(TokenKind.NEWLINE(), "\n", Position(self.line, self.column)))
                 _ = self.advance()
+                at_line_start = True
 
             # Comment
             elif c == "#" or c == ";":
                 tokens.append(self.read_comment())
+                at_line_start = False
 
             # Section header
             elif c == "[":
                 tokens.append(self.read_section())
+                at_line_start = False
 
             # Equals or colon
             elif c == "=" or c == ":":
@@ -354,11 +363,18 @@ struct Lexer:
                 self.skip_whitespace()
                 if self.pos < len(self.input) and self.current() != "\n" and self.current() != "#" and self.current() != ";":
                     tokens.append(self.read_value())
+                at_line_start = False
+
+            # Indented line = continuation value (Python configparser behavior)
+            # Any line starting with whitespace is treated as a continuation
+            elif has_leading_whitespace:
+                tokens.append(self.read_value())
+                at_line_start = False
 
             # Key (starts with letter, digit, or underscore)
             else:
-                # Read as key first, parser will determine context
                 tokens.append(self.read_key())
+                at_line_start = False
 
         tokens.append(Token(TokenKind.EOF(), "", Position(self.line, self.column)))
         return tokens^

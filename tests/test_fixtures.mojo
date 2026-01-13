@@ -149,20 +149,37 @@ fn test_multiline_values() raises:
     assert_true("Server" in config, "Should have Server section")
     assert_equal(config["Server"]["host"], "0.0.0.0")
     assert_equal(config["Server"]["port"], "8080")
-    # Note: Multiline values need parser support for indented continuation
-    # Currently each line will be treated separately
+    # Multiline description (lines 7-10 in fixture)
+    var description = config["Server"]["description"]
+    assert_true("multi-line" in description, "Should contain 'multi-line'")
+    assert_true("across several lines" in description, "Should contain continuation text")
 
     # Database section
     assert_true("Database" in config, "Should have Database section")
-    # Multiline connection string
+    # Multiline connection string (lines 13-16)
+    var conn_str = config["Database"]["connection_string"]
+    assert_true("postgresql://" in conn_str, "Should have postgresql URL")
+    assert_true("?sslmode=require" in conn_str, "Should have multiline query param")
+    assert_true("&connect_timeout" in conn_str, "Should have continuation parameters")
 
-    # Email section  
+    # Email section
     assert_true("Email" in config, "Should have Email section")
-    # Multiline recipients
+    # Multiline recipients (lines 19-21)
+    var recipients = config["Email"]["recipients"]
+    assert_true("user1@example.com" in recipients, "Should have user1")
+    assert_true("user2@example.com" in recipients, "Should have user2 on continuation line")
+
+    # Multiline subject (lines 22-24)
+    var subject = config["Email"]["subject"]
+    assert_true("Important notification" in subject, "Should have subject start")
+    assert_true("next week" in subject, "Should have multiline subject end")
 
     # Features section
     assert_true("Features" in config, "Should have Features section")
-    # Multiline enabled_modules
+    # Multiline enabled_modules (lines 27-30)
+    var modules = config["Features"]["enabled_modules"]
+    assert_true("auth" in modules, "Should have auth module")
+    assert_true("reporting" in modules, "Should have reporting on continuation line")
 
 
 fn test_edge_cases() raises:

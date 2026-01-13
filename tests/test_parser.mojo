@@ -16,7 +16,7 @@ from ini.parser import parse
 fn test_empty_ini() raises:
     """Test parsing empty INI."""
     var data = parse("")
-    
+
     # Should have default section (empty string key)
     assert_true("" in data, "Should have default section")
     assert_equal(len(data[""]), 0, "Default section should be empty")
@@ -25,7 +25,7 @@ fn test_empty_ini() raises:
 fn test_single_section_single_key() raises:
     """Test parsing single section with one key."""
     var data = parse("[Database]\nhost = localhost")
-    
+
     assert_true("Database" in data, "Should have Database section")
     assert_true("host" in data["Database"], "Should have 'host' key")
     assert_equal(data["Database"]["host"], "localhost", "Value should be 'localhost'")
@@ -37,9 +37,9 @@ fn test_single_section_multiple_keys() raises:
 host = 0.0.0.0
 port = 8080
 debug = true"""
-    
+
     var data = parse(input)
-    
+
     assert_true("Server" in data, "Should have Server section")
     assert_equal(data["Server"]["host"], "0.0.0.0", "host should be '0.0.0.0'")
     assert_equal(data["Server"]["port"], "8080", "port should be '8080'")
@@ -53,9 +53,9 @@ host = localhost
 
 [Server]
 port = 8080"""
-    
+
     var data = parse(input)
-    
+
     assert_true("Database" in data, "Should have Database section")
     assert_true("Server" in data, "Should have Server section")
     assert_equal(data["Database"]["host"], "localhost")
@@ -69,9 +69,9 @@ key2 = value2
 
 [Section]
 key3 = value3"""
-    
+
     var data = parse(input)
-    
+
     # Keys without section go into default section ""
     assert_true("" in data, "Should have default section")
     assert_equal(data[""]["key1"], "value1", "key1 should be in default section")
@@ -82,7 +82,7 @@ key3 = value3"""
 fn test_empty_value() raises:
     """Test parsing key with empty value."""
     var data = parse("[Test]\nkey =")
-    
+
     assert_true("Test" in data, "Should have Test section")
     assert_true("key" in data["Test"], "Should have 'key'")
     assert_equal(data["Test"]["key"], "", "Value should be empty string")
@@ -95,9 +95,9 @@ fn test_comments_ignored() raises:
 ; Windows-style comment
 host = localhost  # inline comment
 port = 8080"""
-    
+
     var data = parse(input)
-    
+
     assert_true("Server" in data, "Should have Server section")
     assert_equal(data["Server"]["host"], "localhost", "host should be 'localhost'")
     assert_equal(data["Server"]["port"], "8080", "port should be '8080'")
@@ -106,13 +106,15 @@ port = 8080"""
 fn test_whitespace_trimming() raises:
     """Test that whitespace is trimmed from keys and values."""
     var input = """[Test]
-  key1   =   value1  
-key2=value2"""
-    
+key1   =   value1
+key2=value2
+key3  :  value3"""
+
     var data = parse(input)
-    
-    assert_equal(data["Test"]["key1"], "value1", "Whitespace should be trimmed")
+
+    assert_equal(data["Test"]["key1"], "value1", "Whitespace around = should be trimmed")
     assert_equal(data["Test"]["key2"], "value2", "No-space format should work")
+    assert_equal(data["Test"]["key3"], "value3", "Whitespace around : should be trimmed")
 
 
 fn test_duplicate_key_error() raises:
@@ -120,7 +122,7 @@ fn test_duplicate_key_error() raises:
     var input = """[Test]
 key = value1
 key = value2"""
-    
+
     try:
         var data = parse(input)
         assert_true(False, "Should have raised error for duplicate key")
@@ -134,9 +136,9 @@ fn test_colon_separator() raises:
     var input = """[Test]
 key1: value1
 key2: value2"""
-    
+
     var data = parse(input)
-    
+
     assert_equal(data["Test"]["key1"], "value1", "Colon separator should work")
     assert_equal(data["Test"]["key2"], "value2", "Colon separator should work")
 
