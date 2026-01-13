@@ -133,6 +133,10 @@ struct Token(Copyable, Movable):
         self.value = value
         self.pos = pos
 
+    fn copy(self) -> Self:
+        """Create a copy of this token."""
+        return Token(self.kind, self.value, self.pos)
+
 
 struct Lexer:
     """Tokeniser for INI input.
