@@ -27,8 +27,9 @@ build-package = "mkdir -p dist && mojo package src/ini -o dist/ini.mojopkg"
 clean = "rm -rf dist __pycache__ .pytest_cache ini.mojopkg"
 
 # Example tasks
-example-quickstart = "mojo -I src examples/quickstart.mojo"
-example-simple = "mojo -I src examples/simple.mojo"
+example-read = "mojo -I src examples/read_example.mojo"
+example-write = "mojo -I src examples/write_example.mojo"
+example-file-io = "mojo -I src examples/file_io_example.mojo"
 
 # Benchmark tasks
 benchmark-mojo = "python benchmarks/run_mojo_benchmark.py"

@@ -30,8 +30,8 @@ jobs:
 
     - name: Run examples
       run: |
-        mojo -I src examples/read_example.mojo
-        mojo -I src examples/write_example.mojo
+        pixi run example-read
+        pixi run example-write
 
     - name: Test summary
       if: always()

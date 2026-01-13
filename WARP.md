@@ -27,9 +27,10 @@ pixi run test-configparser   # Python compatibility tests
 # Check Mojo version
 pixi run mojo-version
 
-# Run examples (when implemented)
-pixi run example-quickstart  # Basic usage
-pixi run example-simple      # Comprehensive API demo
+# Run examples
+pixi run example-read        # Basic parsing demonstration
+pixi run example-write       # INI generation demonstration
+pixi run example-file-io     # File reading/writing with modifications
 
 # Build package
 pixi run build-package       # Creates dist/ini.mojopkg
@@ -44,7 +45,7 @@ pixi run clean
 mojo -I src tests/test_lexer.mojo
 
 # Examples
-mojo -I src examples/quickstart.mojo
+mojo -I src examples/read_example.mojo
 ```
 
 **Important:** Always use `-I src` flag when running Mojo files to include the source directory.
