@@ -80,6 +80,37 @@ struct Parser:
         while self.pos < len(self.tokens) and self.current().kind == TokenKind.COMMENT():
             self.advance()
 
+    fn collect_multiline_value(mut self, initial_value: String) -> String:
+        """Collect multiline value from continuation lines.
+
+        Continuation lines are VALUE tokens that appear after NEWLINE/COMMENT
+        without an intervening KEY or SECTION. This matches Python configparser
+        behavior where indented lines are always continuations.
+
+        Args:
+            initial_value: The first line of the value.
+
+        Returns:
+            Complete multiline value with newlines joining continuation lines.
+        """
+        var result = initial_value
+
+        while self.pos < len(self.tokens):
+            # Skip newlines and comments between value lines
+            self.skip_newlines()
+            self.skip_comments()
+
+            # Check if next token is a continuation (VALUE not preceded by KEY)
+            if self.current().kind == TokenKind.VALUE():
+                # This is a continuation line - append with newline
+                result = result + "\n" + self.current().value
+                self.advance()
+            else:
+                # Not a continuation - stop collecting
+                break
+
+        return result
+
     fn parse(mut self) raises -> Dict[String, Dict[String, String]]:
         """Parse tokens into nested dictionary structure.
 
@@ -130,29 +161,14 @@ struct Parser:
                     value = self.current().value
                     self.advance()
 
-                # Handle multiline values: collect continuation lines
-                # A continuation line is a VALUE token preceded only by NEWLINE/COMMENT
-                # (i.e., not preceded by KEY or SECTION)
-                var continuation_buffer = value
-                while self.pos < len(self.tokens):
-                    # Skip newlines and comments
-                    self.skip_newlines()
-                    self.skip_comments()
-
-                    # Check if next token is a continuation (VALUE not preceded by KEY)
-                    if self.current().kind == TokenKind.VALUE():
-                        # This is a continuation line
-                        continuation_buffer = continuation_buffer + "\n" + self.current().value
-                        self.advance()
-                    else:
-                        # Not a continuation, restore position
-                        break
+                # Collect any multiline continuations
+                var final_value = self.collect_multiline_value(value)
 
                 # Check for duplicate key in current section
                 if key in result[current_section]:
                     raise Error("Duplicate key '" + key + "' in section [" + current_section + "] at line " + String(token.pos.line))
 
-                result[current_section][key] = continuation_buffer
+                result[current_section][key] = final_value
 
             # Unexpected token
             else:

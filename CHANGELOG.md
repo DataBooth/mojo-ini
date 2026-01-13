@@ -7,11 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.0] - 2026-01-13
+## [0.2.0] - 2026-01-13
 
 **Status:** ✅ Production Ready
 
-First production release of mojo-ini! A native Mojo INI file parser and writer with Python `configparser` compatibility.
+First stable release of mojo-ini! A native Mojo INI file parser and writer with Python `configparser` compatibility, featuring production-ready performance and comprehensive testing.
 
 ### Added
 
@@ -51,7 +51,12 @@ First production release of mojo-ini! A native Mojo INI file parser and writer w
 #### Documentation
 - Comprehensive README with Quick Start, usage examples, limitations
 - `WARP.md`: Development guidelines and architecture documentation
-- Python comparison benchmarks (70-108 µs parse, 8-12 µs write)
+- Performance benchmarks with statistical reporting (warmup + 5 trials)
+  - Small config (4 sections): ~9 μs parse, ~1 μs write
+  - Medium config (10 sections): ~97 μs parse, ~23 μs write
+  - Large config (50 sections): ~1038 μs parse, ~237 μs write
+  - Multiline values: ~14 μs parse
+  - 7-10x faster than Python for small configs
 
 ### Python configparser Compatibility
 
@@ -64,7 +69,7 @@ First production release of mojo-ini! A native Mojo INI file parser and writer w
 - Empty values
 - Special characters in values
 
-🚧 **Planned for v0.2.0:**
+🚧 **Planned for v0.3.0:**
 - `[DEFAULT]` section with value inheritance
 - Value interpolation `%(var)s`
 - `ConfigParser` class API

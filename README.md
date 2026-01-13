@@ -17,7 +17,7 @@ Parse and write INI configuration files in native Mojo with zero Python dependen
 - ✅ **Comprehensive Tests** - Full test coverage
 - ✅ **Zero Dependencies** - Pure Mojo implementation
 
-**Status**: ✅ **v0.1.0 Released** - Production ready
+**Status**: ✅ **v0.2.0 Released** - Production ready with comprehensive testing and benchmarks
 
 ## Quick Start
 
@@ -150,7 +150,7 @@ print(config["Database"]["connection_string"])
 
 ### Python configparser Compatibility
 
-> ⚠️ **Coming in v0.2.0** - ConfigParser API with type converters planned for future release.
+> ⚠️ **Coming in v0.3.0** - ConfigParser API with type converters planned for future release.
 
 For now, all values are strings. Manual conversion:
 
@@ -213,7 +213,7 @@ Or manually remove leading tabs from keys.
 
 mojo-ini aims for high compatibility with Python's `configparser`:
 
-| Feature | Python configparser | mojo-ini v0.1 |
+| Feature | Python configparser | mojo-ini v0.2 |
 |---------|-------------------|---------------|
 | Basic key=value | ✅ | ✅ |
 | [Sections] | ✅ | ✅ |
@@ -269,20 +269,22 @@ pixi run benchmark-python
 
 See [ROADMAP.md](docs/planning/ROADMAP.md) for detailed development timeline.
 
-### v0.1.0 (Target: Q1 2026)
+### v0.2.0 (Released: 2026-01-13) ✅
 - ✅ Basic INI parsing (sections, key=value)
 - ✅ INI writer
 - ✅ Comments support (# and ;)
 - ✅ Multiline values
-- ✅ Core test suite
+- ✅ Comprehensive test suite (46 tests)
+- ✅ Performance benchmarks with statistical reporting
+- ✅ File I/O helpers (parse_file, write_file)
 
-### v0.2.0 (Target: Q2 2026)
+### v0.3.0 (Target: Q2 2026)
 - 🚧 [DEFAULT] section support
 - 🚧 Value interpolation %(var)s
 - 🚧 configparser API compatibility
 - 🚧 Type converters (getint, getboolean, etc.)
 
-### v0.3.0 (Target: Q3 2026)
+### v0.4.0 (Target: Q3 2026)
 - 🚧 Case-insensitive mode
 - 🚧 Git config format support
 - 🚧 Advanced interpolation

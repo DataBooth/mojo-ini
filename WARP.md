@@ -6,7 +6,7 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 
 mojo-ini is a native INI file parser and writer for Mojo with Python `configparser` compatibility. The project aims to provide drop-in replacement functionality for Python's standard library configparser module, enabling seamless INI file handling in Mojo projects.
 
-**Status:** v0.1.0 - In Development (project setup complete, core implementation in progress)
+**Status:** v0.2.0 - Production Ready (core implementation complete, comprehensive testing, performance benchmarking)
 
 ## Essential Commands
 
@@ -89,7 +89,7 @@ Dict[String, Dict[String, String]]
 # Inner Dict: key → value (all strings)
 ```
 
-For configparser compatibility (v0.2.0+), we'll add:
+For configparser compatibility (v0.3.0+), we'll add:
 ```mojo
 struct ConfigParser:
     var _data: Dict[String, Dict[String, String]]
@@ -103,7 +103,7 @@ struct ConfigParser:
 
 ### Target Compatibility Matrix
 
-| Feature | Python | v0.1 | v0.2 | v0.3 |
+| Feature | Python | v0.2 | v0.3 | v0.4 |
 |---------|--------|------|------|------|
 | Basic key=value | ✅ | ✅ | ✅ | ✅ |
 | [Sections] | ✅ | ✅ | ✅ | ✅ |
@@ -123,25 +123,26 @@ When implementing features, cross-reference with:
 
 ## Development Roadmap
 
-### v0.1.0 - Core Functionality (Q1 2026)
+### v0.2.0 - Core Functionality (Released 2026-01-13) ✅
 - [x] Project structure and tooling
-- [ ] Basic lexer (tokens: SECTION, KEY, VALUE, COMMENT)
-- [ ] Basic parser (sections + key=value)
-- [ ] Basic writer (format INI output)
-- [ ] Multiline value support
-- [ ] Comment handling (# and ;)
-- [ ] Core test suite (~30 tests)
-- [ ] Examples (quickstart, simple)
+- [x] Basic lexer (tokens: SECTION, KEY, VALUE, COMMENT)
+- [x] Basic parser (sections + key=value)
+- [x] Basic writer (format INI output)
+- [x] Multiline value support
+- [x] Comment handling (# and ;)
+- [x] Comprehensive test suite (46 tests)
+- [x] Examples (read, write, file I/O)
+- [x] Performance benchmarking with statistical reporting
+- [x] File I/O helpers (parse_file, write_file)
 
-### v0.2.0 - configparser Compatibility (Q2 2026)
+### v0.3.0 - configparser Compatibility (Q2 2026)
 - [ ] [DEFAULT] section support
 - [ ] Value interpolation %(var)s
 - [ ] ConfigParser struct with Python-like API
 - [ ] Type converters (getint, getboolean, getfloat)
 - [ ] Extended test suite (~60 tests)
-- [ ] Benchmark comparison with Python
 
-### v0.3.0 - Advanced Features (Q3 2026)
+### v0.4.0 - Advanced Features (Q3 2026)
 - [ ] Case-insensitive mode
 - [ ] Git config format (subsections)
 - [ ] Advanced interpolation
@@ -153,7 +154,7 @@ Tests organised by feature:
 - `test_lexer.mojo` - Tokenisation (comments, sections, key=value)
 - `test_parser.mojo` - Structure building (sections, multiline, errors)
 - `test_writer.mojo` - Serialisation (formatting, escaping)
-- `test_configparser_compat.mojo` - Python compatibility (v0.2.0+)
+- `test_configparser_compat.mojo` - Python compatibility (v0.3.0+)
 
 When adding tests:
 - Choose the correct test file based on feature
@@ -164,12 +165,11 @@ When adding tests:
 ## Current Limitations
 
 ### Not Yet Implemented
-- Lexer/parser/writer (core v0.1.0 work)
-- ConfigParser API (v0.2.0)
-- [DEFAULT] section (v0.2.0)
-- Value interpolation (v0.2.0)
-- Type converters (v0.2.0)
-- Case insensitive mode (v0.3.0)
+- ConfigParser API (v0.3.0)
+- [DEFAULT] section (v0.3.0)
+- Value interpolation (v0.3.0)
+- Type converters (v0.3.0)
+- Case insensitive mode (v0.4.0)
 
 ## Contributing Guidelines
 
