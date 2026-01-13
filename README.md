@@ -21,10 +21,11 @@ Parse and write INI configuration files in native Mojo with zero Python dependen
 
 ## Quick Start
 
-```mojo
-from ini import parse, to_ini
+**Parsing INI Files:**
 
-# Parse INI file
+```mojo
+from ini.parser import parse
+
 var config = parse("""
 [Database]
 host = localhost
@@ -37,11 +38,16 @@ timeout = 30
 """)
 
 # Access values
-var host = config["Database"]["host"]      # "localhost"
-var port = config["Database"]["port"]      # "5432"
-var debug = config["Server"]["debug"]      # "true"
+print(config["Database"]["host"])    # localhost
+print(config["Database"]["port"])    # 5432
+print(config["Server"]["debug"])     # true
+```
 
-# Write INI file
+**Writing INI Files:**
+
+```mojo
+from ini.writer import to_ini
+
 var data = Dict[String, Dict[String, String]]()
 data["App"] = Dict[String, String]()
 data["App"]["name"] = "MyApp"
@@ -54,6 +60,8 @@ print(ini_text)
 # name = MyApp
 # version = 1.0
 ```
+
+See `examples/read_example.mojo` and `examples/write_example.mojo` for complete working examples.
 
 ## Installation
 
@@ -85,7 +93,7 @@ cp -r mojo-ini/src/ini your-project/lib/ini
 ### Basic Parsing
 
 ```mojo
-from ini import parse
+from ini.parser import parse
 
 var config = parse("""
 [DEFAULT]
@@ -96,44 +104,46 @@ endpoint = /api/v1
 timeout = 30
 """)
 
-print(config["API"]["endpoint"])  # "/api/v1"
-print(config["API"]["timeout"])   # "30"
+print(config["API"]["endpoint"])  # /api/v1
+print(config["API"]["timeout"])   # 30
 ```
 
 ### File I/O
 
+> ⚠️ **Coming in v0.1.0** - File I/O convenience functions not yet implemented. Use Mojo's built-in file operations for now:
+
 ```mojo
-from ini import parse_file, write_file
+from ini.parser import parse
+from ini.writer import to_ini
 
 # Read from file
-var config = parse_file("config.ini")
+with open("config.ini", "r") as f:
+    var content = f.read()
+    var config = parse(content)
 
 # Modify
 config["Server"]["port"] = "8080"
 
 # Write back
-write_file("config.ini", config)
+with open("config.ini", "w") as f:
+    f.write(to_ini(config))
 ```
 
 ### Python configparser Compatibility
 
+> ⚠️ **Coming in v0.2.0** - ConfigParser API with type converters planned for future release.
+
+For now, all values are strings. Manual conversion:
+
 ```mojo
-from ini import ConfigParser
+from ini.parser import parse
 
-var parser = ConfigParser()
-parser.read("app.ini")
+var config = parse("...")
 
-# Get values with type conversion
-var port = parser.getint("Server", "port")        # Int
-var debug = parser.getboolean("Server", "debug")  # Bool
-var timeout = parser.getfloat("API", "timeout")   # Float64
-
-# Set values
-parser.set("Server", "host", "0.0.0.0")
-
-# Check existence
-if parser.has_section("Database"):
-    print("Database section exists")
+# Manual type conversion
+var port = int(config["Server"]["port"])                    # Int
+var debug = config["Server"]["debug"] == "true"            # Bool
+var timeout = float64(config["API"]["timeout"])            # Float64
 ```
 
 ## Supported INI Features
