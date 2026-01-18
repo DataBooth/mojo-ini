@@ -2,7 +2,7 @@
 
 **INI file parser and writer for Mojo** - Python `configparser` compatible
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-yellow.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Mojo](https://img.shields.io/badge/Mojo-🔥-orange)](https://www.modular.com/mojo)
 
 Parse and write INI configuration files in native Mojo with zero Python dependencies. Compatible with Python's `configparser` module for drop-in replacement in Mojo projects.
@@ -312,7 +312,7 @@ Contributions welcome! Please:
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details
+Apache 2.0 License - see [LICENSE](LICENSE) file for details
 
 ---
 
