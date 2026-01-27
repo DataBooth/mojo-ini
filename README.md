@@ -4,6 +4,7 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-yellow.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Mojo](https://img.shields.io/badge/Mojo-🔥-orange)](https://www.modular.com/mojo)
+[![CodeQL](https://github.com/DataBooth/mojo-ini/workflows/CodeQL/badge.svg)](https://github.com/DataBooth/mojo-ini/actions/workflows/codeql.yml)
 
 Parse and write INI configuration files in native Mojo with zero Python dependencies. Compatible with Python's `configparser` module for drop-in replacement in Mojo projects.
 
