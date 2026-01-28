@@ -30,7 +30,7 @@ from collections import Dict
 
 struct Writer:
     """INI writer for serialising Dict structures to INI format.
-    
+
     The writer builds INI output incrementally in a string buffer,
     handling proper formatting and structure.
     """
@@ -43,7 +43,7 @@ struct Writer:
 
     fn write_key_value(mut self, key: String, value: String):
         """Write a key-value pair to the buffer.
-        
+
         Args:
             key: Key name.
             value: Value string.
@@ -52,7 +52,7 @@ struct Writer:
 
     fn write_section(mut self, section_name: String):
         """Write a section header to the buffer.
-        
+
         Args:
             section_name: Section name (without brackets).
         """
@@ -60,21 +60,21 @@ struct Writer:
 
     fn write(mut self, data: Dict[String, Dict[String, String]]) raises -> String:
         """Write Dict structure to INI format.
-        
+
         Args:
             data: Nested dictionary where top-level keys are section names
                   and values are dictionaries of key-value pairs.
-        
+
         Returns:
             INI formatted string.
-        
+
         Example:
             ```mojo
             var data = Dict[String, Dict[String, String]]()
             data["Server"] = Dict[String, String]()
             data["Server"]["host"] = "localhost"
             data["Server"]["port"] = "8080"
-            
+
             var writer = Writer()
             var ini_text = writer.write(data)
             # Output:
@@ -87,7 +87,7 @@ struct Writer:
         if "" in data:
             for entry in data[""].items():
                 self.write_key_value(entry.key, entry.value)
-            
+
             # Add blank line after default section if there are other sections
             if len(data) > 1:
                 self.buffer += "\n"
@@ -98,7 +98,7 @@ struct Writer:
             # Skip default section (already written)
             if section_entry.key == "":
                 continue
-            
+
             # Add blank line between sections (but not before first section)
             if not first_section:
                 self.buffer += "\n"
@@ -116,21 +116,21 @@ struct Writer:
 
 fn to_ini(data: Dict[String, Dict[String, String]]) raises -> String:
     """Convert Dict structure to INI format string.
-    
+
     Convenience function that handles writing in one step.
-    
+
     Args:
         data: Nested dictionary mapping section names to key-value pairs.
-    
+
     Returns:
         INI formatted string.
-    
+
     Example:
         ```mojo
         var data = Dict[String, Dict[String, String]]()
         data["Database"] = Dict[String, String]()
         data["Database"]["host"] = "localhost"
-        
+
         var ini_text = to_ini(data)
         print(ini_text)
         # Output:

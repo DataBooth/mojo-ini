@@ -2,7 +2,7 @@
 
 Tests serialisation of Dict structures to INI format:
 - Section headers
-- Key-value pairs  
+- Key-value pairs
 - Default section (no header)
 - Multiple sections
 - Roundtrip (parse → write → parse)
@@ -18,7 +18,7 @@ fn test_empty_dict() raises:
     """Test writing empty dictionary."""
     var data = Dict[String, Dict[String, String]]()
     data[""] = Dict[String, String]()  # Empty default section
-    
+
     var ini_text = to_ini(data)
     assert_equal(ini_text, "", "Empty dict should produce empty string")
 
@@ -28,9 +28,9 @@ fn test_single_section_single_key() raises:
     var data = Dict[String, Dict[String, String]]()
     data["Database"] = Dict[String, String]()
     data["Database"]["host"] = "localhost"
-    
+
     var ini_text = to_ini(data)
-    
+
     assert_true("[Database]" in ini_text, "Should have section header")
     assert_true("host = localhost" in ini_text, "Should have key-value pair")
 
@@ -42,9 +42,9 @@ fn test_single_section_multiple_keys() raises:
     data["Server"]["host"] = "0.0.0.0"
     data["Server"]["port"] = "8080"
     data["Server"]["debug"] = "true"
-    
+
     var ini_text = to_ini(data)
-    
+
     assert_true("[Server]" in ini_text, "Should have section header")
     assert_true("host = 0.0.0.0" in ini_text, "Should have host")
     assert_true("port = 8080" in ini_text, "Should have port")
@@ -58,9 +58,9 @@ fn test_multiple_sections() raises:
     data["Database"]["host"] = "localhost"
     data["Server"] = Dict[String, String]()
     data["Server"]["port"] = "8080"
-    
+
     var ini_text = to_ini(data)
-    
+
     assert_true("[Database]" in ini_text, "Should have Database section")
     assert_true("[Server]" in ini_text, "Should have Server section")
     assert_true("host = localhost" in ini_text, "Should have Database host")
@@ -73,9 +73,9 @@ fn test_default_section() raises:
     data[""] = Dict[String, String]()  # Default section
     data[""]["key1"] = "value1"
     data[""]["key2"] = "value2"
-    
+
     var ini_text = to_ini(data)
-    
+
     # Default section should NOT have a header
     assert_true("[" not in ini_text, "Should not have section headers")
     assert_true("key1 = value1" in ini_text, "Should have key1")
@@ -89,9 +89,9 @@ fn test_default_and_named_sections() raises:
     data[""]["global_key"] = "global_value"
     data["Section"] = Dict[String, String]()
     data["Section"]["key"] = "value"
-    
+
     var ini_text = to_ini(data)
-    
+
     # Default section keys come first, no header
     assert_true("global_key = global_value" in ini_text, "Should have global key")
     # Then named section with header
@@ -108,16 +108,16 @@ port = 5432
 [Server]
 debug = true
 timeout = 30"""
-    
+
     # Parse original
     var data1 = parse(original_ini)
-    
+
     # Write to INI
     var written_ini = to_ini(data1)
-    
+
     # Parse written INI
     var data2 = parse(written_ini)
-    
+
     # Should have same sections and values
     assert_equal(data1["Database"]["host"], data2["Database"]["host"])
     assert_equal(data1["Database"]["port"], data2["Database"]["port"])
@@ -132,11 +132,11 @@ fn test_roundtrip_with_special_chars() raises:
     data1["Test"]["email"] = "user@example.com"
     data1["Test"]["url"] = "https://example.com/path?query=1"
     data1["Test"]["path"] = "/path/with spaces/file"
-    
+
     # Write and parse back
     var ini_text = to_ini(data1)
     var data2 = parse(ini_text)
-    
+
     # Should preserve special characters
     assert_equal(data1["Test"]["email"], data2["Test"]["email"])
     assert_equal(data1["Test"]["url"], data2["Test"]["url"])
@@ -149,9 +149,9 @@ fn test_empty_values() raises:
     data["Test"] = Dict[String, String]()
     data["Test"]["empty_key"] = ""
     data["Test"]["normal_key"] = "value"
-    
+
     var ini_text = to_ini(data)
-    
+
     assert_true("empty_key = " in ini_text, "Should have empty value")
     assert_true("normal_key = value" in ini_text, "Should have normal value")
 
