@@ -20,7 +20,7 @@ Architecture:
     - Parser: Builds Dict[String, Dict[String, String]] from tokens
     - Writer: Serialises Dict structure to INI format
 
-Status: v0.2.0 - Production Ready
+Status: v0.2.2 - Production Ready
 """
 
 # Public API - re-export from submodules
