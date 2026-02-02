@@ -180,22 +180,19 @@ struct Parser:
 fn parse(content: String) raises -> Dict[String, Dict[String, String]]:
     """Parse INI string into nested dictionary.
 
-    Convenience function that handles lexing and parsing in one step.
+    This is a convenience function that handles lexing and parsing in one step.
+    The ``content`` parameter is an INI formatted string.
 
-    Args:
-        content: INI formatted string.
+    Returns a dict mapping section names to key-value pairs.
 
-    Returns:
-        Dict mapping section names to key-value pairs.
-
-    Raises:
-        Error: If INI syntax is invalid.
+    Raises an ``Error`` if INI syntax is invalid.
 
     Example:
         ```mojo
         var data = parse("[Database]\nhost = localhost\nport = 5432")
         print(data["Database"]["host"])  # "localhost"
         ```
+        Example usage.
     """
     var lexer = Lexer(content)
     var tokens = lexer.tokenize()

@@ -37,6 +37,14 @@ raw characters, making INI syntax rules easier to implement.
 from collections import List
 
 
+fn to_chars(text: String) -> List[String]:
+    """Convert a String into a list of single-codepoint Strings."""
+    var chars = List[String]()
+    for slice in text.codepoint_slices():
+        chars.append(String(slice))
+    return chars^
+
+
 @register_passable("trivial")
 struct Position:
     """Position in the source file (line and column).
@@ -155,6 +163,7 @@ struct Lexer:
     """
 
     var input: String
+    var chars: List[String]
     var pos: Int      # Current position in input
     var line: Int     # Current line number (1-indexed)
     var column: Int   # Current column number (1-indexed)
@@ -166,6 +175,7 @@ struct Lexer:
             input: INI content to tokenise.
         """
         self.input = input
+        self.chars = to_chars(input)
         self.pos = 0
         self.line = 1
         self.column = 1
@@ -176,9 +186,9 @@ struct Lexer:
         Returns:
             Current character or empty string if at EOF.
         """
-        if self.pos >= len(self.input):
+        if self.pos >= len(self.chars):
             return ""
-        return String(self.input[self.pos])
+        return self.chars[self.pos]
 
     fn peek(self, offset: Int = 1) -> String:
         """Look ahead at character without consuming it.
@@ -190,9 +200,9 @@ struct Lexer:
             Character at pos + offset or empty string if out of bounds.
         """
         var peek_pos = self.pos + offset
-        if peek_pos >= len(self.input):
+        if peek_pos >= len(self.chars):
             return ""
-        return String(self.input[peek_pos])
+        return self.chars[peek_pos]
 
     fn advance(mut self) -> String:
         """Consume and return current character.
@@ -202,10 +212,10 @@ struct Lexer:
         Returns:
             Current character or empty string if at EOF.
         """
-        if self.pos >= len(self.input):
+        if self.pos >= len(self.chars):
             return ""
 
-        var c = String(self.input[self.pos])
+        var c = self.chars[self.pos]
         self.pos += 1
 
         if c == "\n":
@@ -221,7 +231,7 @@ struct Lexer:
 
         Newlines are significant in INI for separating key-value pairs.
         """
-        while self.pos < len(self.input):
+        while self.pos < len(self.chars):
             var c = self.current()
             if c == " " or c == "\t":
                 _ = self.advance()
@@ -241,7 +251,7 @@ struct Lexer:
         _ = self.advance()  # Skip # or ;
 
         var comment = String("")
-        while self.pos < len(self.input):
+        while self.pos < len(self.chars):
             var c = self.current()
             if c == "\n":
                 break
@@ -263,7 +273,7 @@ struct Lexer:
         _ = self.advance()  # Skip [
 
         var section_name = String("")
-        while self.pos < len(self.input):
+        while self.pos < len(self.chars):
             var c = self.current()
             if c == "]":
                 _ = self.advance()  # Skip ]
@@ -284,7 +294,7 @@ struct Lexer:
         var start_pos = Position(self.line, self.column)
         var key = String("")
 
-        while self.pos < len(self.input):
+        while self.pos < len(self.chars):
             var c = self.current()
             if c == "=" or c == ":" or c == "\n":
                 break
@@ -303,7 +313,7 @@ struct Lexer:
         var start_pos = Position(self.line, self.column)
         var value = String("")
 
-        while self.pos < len(self.input):
+        while self.pos < len(self.chars):
             var c = self.current()
             if c == "\n":
                 break
@@ -326,7 +336,7 @@ struct Lexer:
         var tokens = List[Token]()
         var at_line_start = True  # Track if we're at the beginning of a line
 
-        while self.pos < len(self.input):
+        while self.pos < len(self.chars):
             # Check for leading whitespace (indicates continuation line)
             var has_leading_whitespace = False
             if at_line_start and (self.current() == " " or self.current() == "\t"):

@@ -31,14 +31,11 @@ from .writer import to_ini as _to_ini
 fn parse(content: String) raises -> Dict[String, Dict[String, String]]:
     """Parse INI string into nested dictionary.
 
-    Args:
-        content: INI formatted string
+    The ``content`` parameter is an INI formatted string.
 
-    Returns:
-        Dict mapping section names to key-value pairs
+    Returns a dictionary mapping section names to key-value pairs.
 
-    Raises:
-        Error: If INI syntax is invalid
+    Raises an ``Error`` if INI syntax is invalid.
 
     Example:
         ```mojo
@@ -52,6 +49,7 @@ fn parse(content: String) raises -> Dict[String, Dict[String, String]]:
 
         print(config["Database"]["host"])  # "localhost"
         ```
+        Example usage.
     """
     return _parse(content)
 
@@ -59,11 +57,9 @@ fn parse(content: String) raises -> Dict[String, Dict[String, String]]:
 fn to_ini(data: Dict[String, Dict[String, String]]) raises -> String:
     """Convert nested dictionary to INI format string.
 
-    Args:
-        data: Dict mapping section names to key-value pairs
+    The ``data`` argument is a dict mapping section names to key-value pairs.
 
-    Returns:
-        INI formatted string
+    Returns an INI formatted string.
 
     Example:
         ```mojo
@@ -76,6 +72,7 @@ fn to_ini(data: Dict[String, Dict[String, String]]) raises -> String:
         var ini_text = to_ini(data)
         print(ini_text)  # [App]\nname = MyApp\n
         ```
+        Example usage.
     """
     return _to_ini(data)
 
@@ -83,14 +80,11 @@ fn to_ini(data: Dict[String, Dict[String, String]]) raises -> String:
 fn parse_file(path: String) raises -> Dict[String, Dict[String, String]]:
     """Parse INI file into nested dictionary.
 
-    Args:
-        path: Path to INI file
+    The ``path`` parameter is the path to the INI file.
 
-    Returns:
-        Dict mapping section names to key-value pairs
+    Returns a dict mapping section names to key-value pairs.
 
-    Raises:
-        Error: If file cannot be read or INI syntax is invalid
+    Raises an ``Error`` if the file cannot be read or INI syntax is invalid.
 
     Example:
         ```mojo
@@ -99,6 +93,7 @@ fn parse_file(path: String) raises -> Dict[String, Dict[String, String]]:
         var config = parse_file("config.ini")
         print(config["Server"]["port"])
         ```
+        Example usage.
     """
     with open(path, "r") as f:
         var content = f.read()
@@ -108,12 +103,10 @@ fn parse_file(path: String) raises -> Dict[String, Dict[String, String]]:
 fn write_file(path: String, data: Dict[String, Dict[String, String]]) raises:
     """Write nested dictionary to INI file.
 
-    Args:
-        path: Path to output INI file
-        data: Dict mapping section names to key-value pairs
+    The ``path`` parameter is the path to the output INI file.
+    The ``data`` argument is a dict mapping section names to key-value pairs.
 
-    Raises:
-        Error: If file cannot be written
+    Raises an ``Error`` if the file cannot be written.
 
     Example:
         ```mojo
@@ -125,6 +118,7 @@ fn write_file(path: String, data: Dict[String, Dict[String, String]]) raises:
 
         write_file("output.ini", data)
         ```
+        Example usage.
     """
     var ini_text = _to_ini(data)
     with open(path, "w") as f:

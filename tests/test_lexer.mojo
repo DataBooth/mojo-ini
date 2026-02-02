@@ -92,7 +92,7 @@ fn test_unclosed_section_error() raises:
     var lexer = Lexer("[Unclosed")
 
     try:
-        var tokens = lexer.tokenize()
+        _ = lexer.tokenize()
         assert_true(False, "Should have raised error for unclosed section")
     except e:
         # Expected error

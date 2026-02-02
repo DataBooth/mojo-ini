@@ -124,7 +124,7 @@ key = value1
 key = value2"""
 
     try:
-        var data = parse(input)
+        _ = parse(input)
         assert_true(False, "Should have raised error for duplicate key")
     except e:
         # Expected error

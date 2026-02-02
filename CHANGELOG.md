@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Bumped MAX / Mojo toolchain dependency to `max ">=26.1.0,<27"` and updated recipes to pin `mojo_version = "=0.26.1"`.
+- Updated the INI lexer to use `codepoint_slices()` and a cached `List[String]` buffer instead of direct `String` indexing, matching Mojo 0.26.1 `__getitem__` semantics while preserving existing behaviour.
+- Adopted a "no warnings" policy for the core library and tests so future migrations surface only new issues.
+
 ## [0.2.0] - 2026-01-13
 
 **Status:** ✅ Production Ready
