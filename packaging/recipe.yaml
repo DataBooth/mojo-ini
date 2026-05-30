@@ -1,0 +1,53 @@
+context:
+  version: 0.2.2
+  mojo_version: "=0.26.1"
+
+package:
+  name: mojo-ini
+  version: ${{ version }}
+
+source:
+  - git: https://github.com/DataBooth/mojo-ini.git
+    tag: v0.2.2
+
+build:
+  number: 0
+  script:
+    - mkdir -p ${PREFIX}/lib/mojo
+    - mojo package src/ini -o ${PREFIX}/lib/mojo/ini.mojopkg
+
+requirements:
+  build:
+    - mojo-compiler ${{ mojo_version }}
+  host:
+    - mojo-compiler ${{ mojo_version }}
+  run:
+    # Mojo bytecode is not forwards-compatible across compiler minor versions,
+    # so we require the exact compiler series used at build time.
+    - mojo-compiler ${{ mojo_version }}
+
+tests:
+  - files:
+      source:
+        - test_package.mojo
+    script:
+      # Run package smoke test. In the build test environment the file lives under
+      # info/recipe/, while in the installed test-files environment it is copied
+      # next to this script. Handle both cases.
+      - if [ -f info/recipe/test_package.mojo ]; then $PREFIX/bin/mojo -I ${PREFIX}/lib/mojo info/recipe/test_package.mojo; else $PREFIX/bin/mojo -I ${PREFIX}/lib/mojo test_package.mojo; fi
+
+about:
+  homepage: https://github.com/DataBooth/mojo-ini
+  license: Apache-2.0
+  license_file: LICENSE
+  summary: INI parser and writer for Mojo with Python configparser compatibility
+  description: |
+    mojo-ini provides native INI parsing and writing in Mojo with zero Python dependencies.
+    It supports classic INI syntax, multiline values (indented continuation), comments,
+    and includes a clean public API: parse(), to_ini(), parse_file(), write_file().
+  documentation: https://github.com/DataBooth/mojo-ini#readme
+  repository: https://github.com/DataBooth/mojo-ini
+
+extra:
+  recipe-maintainers:
+    - mjboothaus

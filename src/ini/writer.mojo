@@ -25,7 +25,7 @@ The writer uses a buffer-based approach:
 This keeps serialisation simple and predictable.
 """
 
-from collections import Dict
+from std.collections import Dict
 
 
 struct Writer:

@@ -26,7 +26,7 @@ The parser uses a simple state machine:
 INI is simpler than TOML - no arrays, no nesting beyond one level.
 """
 
-from collections import Dict, List
+from std.collections import Dict, List
 from .lexer import Token, TokenKind, Lexer
 
 

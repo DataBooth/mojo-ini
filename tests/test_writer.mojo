@@ -11,7 +11,7 @@ Tests serialisation of Dict structures to INI format:
 from testing import assert_equal, assert_true, TestSuite
 from ini.parser import parse
 from ini.writer import to_ini
-from collections import Dict
+from std.collections import Dict
 
 
 fn test_empty_dict() raises:

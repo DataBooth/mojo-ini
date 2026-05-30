@@ -41,7 +41,7 @@ NC = "\033[0m"  # No colour
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_DIR = PROJECT_ROOT / "scripts"
-RECIPE_FILE = PROJECT_ROOT / "recipe.yaml"
+RECIPE_FILE = PROJECT_ROOT / "packaging" / "recipe.yaml"
 OUTPUT_DIR = PROJECT_ROOT / "output"
 PIXl_MANIFEST = PROJECT_ROOT / "pixi.toml"
 
@@ -117,17 +117,23 @@ def run_command(
 
 
 def get_recipe_version(path: Path) -> str | None:
-    """Extract the concrete numeric version from recipe.yaml.
+    """Extract version from recipe.yaml.
 
-    The file contains multiple "version" fields (context.version,
-    package.version template). We want the numeric value from the
-    context block, e.g. "0.5.1".
+    Supports both:
+    - context.version
+    - package.version
+
+    Prefers context.version when both exist.
+    Ignores templated values such as ``${{ version }}``.
     """
-
     if not path.is_file():
         return None
 
-    in_context = False
+    context_version: str | None = None
+    package_version: str | None = None
+
+    current_top: str | None = None
+
     try:
         with path.open("r", encoding="utf-8") as f:
             for raw_line in f:
@@ -135,21 +141,34 @@ def get_recipe_version(path: Path) -> str | None:
                 if not line.strip():
                     continue
 
-                # Top-level key
                 if not line.startswith(" "):
-                    in_context = line.strip().startswith("context:")
+                    # Top-level key (e.g., context:, package:)
+                    if line.endswith(":"):
+                        current_top = line[:-1].strip()
+                    else:
+                        current_top = None
                     continue
 
-                if in_context:
-                    stripped = line.strip()
-                    if stripped.startswith("version:"):
-                        _, value = stripped.split(":", 1)
-                        return value.strip().strip("'\"")
+                stripped = line.strip()
+                if not stripped.startswith("version:"):
+                    continue
+
+                _, value = stripped.split(":", 1)
+                cleaned = value.strip().strip("'\"")
+
+                if cleaned.startswith("${{") and cleaned.endswith("}}"):
+                    continue
+
+                if current_top == "context":
+                    context_version = cleaned
+                elif current_top == "package":
+                    package_version = cleaned
+
     except OSError as exc:
         error(f"Failed to read recipe file: {exc}")
         return None
 
-    return None
+    return context_version or package_version
 
 
 def check_tests() -> CheckResult:

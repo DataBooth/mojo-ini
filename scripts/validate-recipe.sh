@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Validate recipe.yaml against modular-community schema
+# Validate packaging/recipe.yaml against modular-community schema
 # This runs the same validation as modular-community CI
 
 set -euo pipefail
 
-RECIPE_FILE="${1:-recipe.yaml}"
+RECIPE_FILE="${1:-packaging/recipe.yaml}"
 
 echo "🔍 Validating ${RECIPE_FILE} against modular-community schema..."
 echo ""
