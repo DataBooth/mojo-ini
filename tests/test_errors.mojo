@@ -4,11 +4,11 @@ These tests verify that the parser properly detects and reports errors
 for invalid INI syntax, matching Python configparser behavior where appropriate.
 """
 
-from testing import assert_true, TestSuite
+from std.testing import assert_true, TestSuite
 from ini.parser import parse
 
 
-fn test_unclosed_section_header() raises:
+def test_unclosed_section_header() raises:
     """Test that unclosed section header raises error."""
     var input = "[Section"
 
@@ -21,7 +21,7 @@ fn test_unclosed_section_header() raises:
         assert_true("Unclosed" in err_msg, "Error should mention unclosed section")
 
 
-fn test_duplicate_key_in_section() raises:
+def test_duplicate_key_in_section() raises:
     """Test that duplicate keys in same section raise error."""
     var input = """[Test]
 key = value1
@@ -36,7 +36,7 @@ key = value2"""
         assert_true("Duplicate" in err_msg, "Error should mention duplicate key")
 
 
-fn test_missing_equals_sign() raises:
+def test_missing_equals_sign() raises:
     """Test that missing equals sign raises error."""
     var input = """[Test]
 key_without_equals"""
@@ -50,7 +50,7 @@ key_without_equals"""
         assert_true("=" in err_msg or "Expected" in err_msg, "Error should mention missing =")
 
 
-fn test_empty_section_name() raises:
+def test_empty_section_name() raises:
     """Test that empty section name is handled."""
     var input = "[]\nkey = value"
 
@@ -60,7 +60,7 @@ fn test_empty_section_name() raises:
     assert_true("" in config, "Should handle empty section name")
 
 
-fn test_special_characters_in_values() raises:
+def test_special_characters_in_values() raises:
     """Test that special characters in values are preserved."""
     var input = """[Test]
 url = https://example.com/path?query=value&other=123
@@ -78,7 +78,7 @@ equals = key=value inside value"""
     assert_true("=" in config["Test"]["equals"], "Should preserve = in value")
 
 
-fn test_unicode_values() raises:
+def test_unicode_values() raises:
     """Test that Unicode characters are handled correctly."""
     var input = """[Test]
 greeting = Hello, 世界!
@@ -91,16 +91,16 @@ cyrillic = Привет мир"""
     assert_true("Привет" in config["Test"]["cyrillic"], "Should handle Cyrillic")
 
 
-fn test_very_long_lines() raises:
+def test_very_long_lines() raises:
     """Test that very long lines are handled."""
     var long_value = "x" * 10000
     var input = "[Test]\nkey = " + long_value
 
     var config = parse(input)
-    assert_true(len(config["Test"]["key"]) == 10000, "Should handle very long values")
+    assert_true(config["Test"]["key"].byte_length() == 10000, "Should handle very long values")
 
 
-fn test_many_sections() raises:
+def test_many_sections() raises:
     """Test that many sections can be parsed."""
     var input = String("")
     for i in range(100):
@@ -112,14 +112,14 @@ fn test_many_sections() raises:
     assert_true(len(config) >= 100, "Should handle many sections (got " + String(len(config)) + ")")
 
 
-fn test_empty_file() raises:
+def test_empty_file() raises:
     """Test that empty file is handled gracefully."""
     var config = parse("")
     # Should have at least the default section
     assert_true("" in config, "Empty file should have default section")
 
 
-fn test_only_comments() raises:
+def test_only_comments() raises:
     """Test that file with only comments is handled."""
     var input = """# Comment 1
 ; Comment 2
@@ -129,7 +129,7 @@ fn test_only_comments() raises:
     assert_true("" in config, "Comment-only file should have default section")
 
 
-fn test_section_with_quotes() raises:
+def test_section_with_quotes() raises:
     """Test section names with quotes (Git config style)."""
     var input = """[remote "origin"]
 url = https://github.com/user/repo.git"""
@@ -139,6 +139,6 @@ url = https://github.com/user/repo.git"""
     assert_true('remote "origin"' in config, "Should preserve quotes in section name")
 
 
-fn main() raises:
+def main() raises:
     """Run all error handling tests using TestSuite."""
     TestSuite.discover_tests[__functions_in_module()]().run()

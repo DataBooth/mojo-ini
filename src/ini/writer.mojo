@@ -25,7 +25,7 @@ The writer uses a buffer-based approach:
 This keeps serialisation simple and predictable.
 """
 
-from collections import Dict
+from std.collections import Dict
 
 
 struct Writer:
@@ -37,11 +37,11 @@ struct Writer:
 
     var buffer: String
 
-    fn __init__(out self):
+    def __init__(out self):
         """Initialise writer with empty buffer."""
         self.buffer = ""
 
-    fn write_key_value(mut self, key: String, value: String):
+    def write_key_value(mut self, key: String, value: String):
         """Write a key-value pair to the buffer.
 
         Args:
@@ -50,7 +50,7 @@ struct Writer:
         """
         self.buffer += key + " = " + value + "\n"
 
-    fn write_section(mut self, section_name: String):
+    def write_section(mut self, section_name: String):
         """Write a section header to the buffer.
 
         Args:
@@ -58,7 +58,7 @@ struct Writer:
         """
         self.buffer += "[" + section_name + "]\n"
 
-    fn write(mut self, data: Dict[String, Dict[String, String]]) raises -> String:
+    def write(mut self, data: Dict[String, Dict[String, String]]) raises -> String:
         """Write Dict structure to INI format.
 
         Args:
@@ -114,7 +114,7 @@ struct Writer:
         return self.buffer
 
 
-fn to_ini(data: Dict[String, Dict[String, String]]) raises -> String:
+def to_ini(data: Dict[String, Dict[String, String]]) raises -> String:
     """Convert Dict structure to INI format string.
 
     Convenience function that handles writing in one step.

@@ -6,10 +6,10 @@ Compare results with benchmarks/compare_python.py for baseline.
 
 from time.time import perf_counter_ns
 from ini import parse, to_ini
-from math import sqrt
+from std.math import sqrt
 
 
-fn benchmark_parse(content: String, warmup_iterations: Int, iterations: Int, trials: Int) raises -> List[Float64]:
+def benchmark_parse(content: String, warmup_iterations: Int, iterations: Int, trials: Int) raises -> List[Float64]:
     """Benchmark parsing performance with multiple trials.
 
     Args:
@@ -42,7 +42,7 @@ fn benchmark_parse(content: String, warmup_iterations: Int, iterations: Int, tri
     return results^
 
 
-fn benchmark_write(data: Dict[String, Dict[String, String]], warmup_iterations: Int, iterations: Int, trials: Int) raises -> List[Float64]:
+def benchmark_write(data: Dict[String, Dict[String, String]], warmup_iterations: Int, iterations: Int, trials: Int) raises -> List[Float64]:
     """Benchmark writing performance with multiple trials.
 
     Args:
@@ -81,14 +81,14 @@ struct BenchmarkStats:
     var mean: Float64
     var stddev: Float64
 
-    fn __init__(out self, min_val: Float64, max_val: Float64, mean: Float64, stddev: Float64):
+    def __init__(out self, min_val: Float64, max_val: Float64, mean: Float64, stddev: Float64):
         self.min_val = min_val
         self.max_val = max_val
         self.mean = mean
         self.stddev = stddev
 
 
-fn calculate_stats(results: List[Float64]) -> BenchmarkStats:
+def calculate_stats(results: List[Float64]) -> BenchmarkStats:
     """Calculate min, max, mean, and standard deviation.
 
     Returns:
@@ -125,7 +125,7 @@ fn calculate_stats(results: List[Float64]) -> BenchmarkStats:
     return BenchmarkStats(min_val, max_val, mean, stddev)
 
 
-fn print_stats(label: String, results: List[Float64]):
+def print_stats(label: String, results: List[Float64]):
     """Print benchmark statistics."""
     var stats = calculate_stats(results)
     var min_time = stats.min_val
@@ -138,7 +138,7 @@ fn print_stats(label: String, results: List[Float64]):
     print("        " + String(Int(1_000_000.0 / mean_time)) + " operations/second")
 
 
-fn create_test_data(sections: Int, keys_per_section: Int) raises -> Dict[String, Dict[String, String]]:
+def create_test_data(sections: Int, keys_per_section: Int) raises -> Dict[String, Dict[String, String]]:
     """Create test data with specified size."""
     var data = Dict[String, Dict[String, String]]()
 
@@ -154,7 +154,7 @@ fn create_test_data(sections: Int, keys_per_section: Int) raises -> Dict[String,
     return data^
 
 
-fn main() raises:
+def main() raises:
     print("=" * 70)
     print("mojo-ini Performance Benchmark")
     print("=" * 70)

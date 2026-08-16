@@ -10,11 +10,11 @@ across various formats and dialects:
 - Edge cases
 """
 
-from testing import assert_equal, assert_true, TestSuite
+from std.testing import assert_equal, assert_true, TestSuite
 from ini.parser import parse
 
 
-fn read_fixture(filename: String) raises -> String:
+def read_fixture(filename: String) raises -> String:
     """Read a fixture file from the fixtures directory."""
     var path = "fixtures/" + filename
 
@@ -22,7 +22,7 @@ fn read_fixture(filename: String) raises -> String:
         return f.read()
 
 
-fn test_sample_ini() raises:
+def test_sample_ini() raises:
     """Test parsing basic sample.ini."""
     var content = read_fixture("sample.ini")
     var config = parse(content)
@@ -53,7 +53,7 @@ fn test_sample_ini() raises:
     assert_equal(config["Features"]["enable_admin"], "false")
 
 
-fn test_python_configparser() raises:
+def test_python_configparser() raises:
     """Test parsing Python configparser style INI with DEFAULT section."""
     var content = read_fixture("python_configparser.ini")
     var config = parse(content)
@@ -74,7 +74,7 @@ fn test_python_configparser() raises:
     assert_equal(config["URLs"]["host"], "github")
 
 
-fn test_git_config() raises:
+def test_git_config() raises:
     """Test parsing Git config style INI."""
     var content = read_fixture("git_config.ini")
     var config = parse(content)
@@ -99,7 +99,7 @@ fn test_git_config() raises:
     assert_equal(config["alias"]["co"], "checkout")
 
 
-fn test_mypy_ini() raises:
+def test_mypy_ini() raises:
     """Test parsing mypy.ini style configuration."""
     var content = read_fixture("mypy.ini")
     var config = parse(content)
@@ -112,7 +112,7 @@ fn test_mypy_ini() raises:
     assert_equal(config["mypy"]["strict"], "True")
 
 
-fn test_windows_classic() raises:
+def test_windows_classic() raises:
     """Test parsing classic Windows INI with semicolon comments."""
     var content = read_fixture("windows_classic.ini")
     var config = parse(content)
@@ -140,7 +140,7 @@ fn test_windows_classic() raises:
     assert_equal(config["Logging"]["File"], "C:\\Logs\\app.log")
 
 
-fn test_multiline_values() raises:
+def test_multiline_values() raises:
     """Test parsing multiline values with indented continuation."""
     var content = read_fixture("multiline_values.ini")
     var config = parse(content)
@@ -182,7 +182,7 @@ fn test_multiline_values() raises:
     assert_true("reporting" in modules, "Should have reporting on continuation line")
 
 
-fn test_edge_cases() raises:
+def test_edge_cases() raises:
     """Test parsing edge cases INI."""
     var content = read_fixture("edge_cases.ini")
     var config = parse(content)
@@ -214,6 +214,6 @@ fn test_edge_cases() raises:
     assert_equal(config["UnicodeValues"]["emoji"], "🔥 mojo-ini 🚀")
 
 
-fn main() raises:
+def main() raises:
     """Run all fixture tests using TestSuite."""
     TestSuite.discover_tests[__functions_in_module()]().run()

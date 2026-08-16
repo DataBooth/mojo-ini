@@ -8,7 +8,7 @@ Run with: mojo -I src examples/write_example.mojo
 from ini import to_ini
 
 
-fn main() raises:
+def main() raises:
     # Create configuration data structure
     var data = Dict[String, Dict[String, String]]()
 
