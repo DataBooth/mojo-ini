@@ -8,13 +8,13 @@ Tests serialisation of Dict structures to INI format:
 - Roundtrip (parse → write → parse)
 """
 
-from testing import assert_equal, assert_true, TestSuite
+from std.testing import assert_equal, assert_true, TestSuite
 from ini.parser import parse
 from ini.writer import to_ini
 from std.collections import Dict
 
 
-fn test_empty_dict() raises:
+def test_empty_dict() raises:
     """Test writing empty dictionary."""
     var data = Dict[String, Dict[String, String]]()
     data[""] = Dict[String, String]()  # Empty default section
@@ -23,7 +23,7 @@ fn test_empty_dict() raises:
     assert_equal(ini_text, "", "Empty dict should produce empty string")
 
 
-fn test_single_section_single_key() raises:
+def test_single_section_single_key() raises:
     """Test writing single section with one key."""
     var data = Dict[String, Dict[String, String]]()
     data["Database"] = Dict[String, String]()
@@ -35,7 +35,7 @@ fn test_single_section_single_key() raises:
     assert_true("host = localhost" in ini_text, "Should have key-value pair")
 
 
-fn test_single_section_multiple_keys() raises:
+def test_single_section_multiple_keys() raises:
     """Test writing section with multiple keys."""
     var data = Dict[String, Dict[String, String]]()
     data["Server"] = Dict[String, String]()
@@ -51,7 +51,7 @@ fn test_single_section_multiple_keys() raises:
     assert_true("debug = true" in ini_text, "Should have debug")
 
 
-fn test_multiple_sections() raises:
+def test_multiple_sections() raises:
     """Test writing multiple sections."""
     var data = Dict[String, Dict[String, String]]()
     data["Database"] = Dict[String, String]()
@@ -67,7 +67,7 @@ fn test_multiple_sections() raises:
     assert_true("port = 8080" in ini_text, "Should have Server port")
 
 
-fn test_default_section() raises:
+def test_default_section() raises:
     """Test writing keys without section header (default section)."""
     var data = Dict[String, Dict[String, String]]()
     data[""] = Dict[String, String]()  # Default section
@@ -82,7 +82,7 @@ fn test_default_section() raises:
     assert_true("key2 = value2" in ini_text, "Should have key2")
 
 
-fn test_default_and_named_sections() raises:
+def test_default_and_named_sections() raises:
     """Test writing both default and named sections."""
     var data = Dict[String, Dict[String, String]]()
     data[""] = Dict[String, String]()
@@ -99,7 +99,7 @@ fn test_default_and_named_sections() raises:
     assert_true("key = value" in ini_text, "Should have section key")
 
 
-fn test_roundtrip_simple() raises:
+def test_roundtrip_simple() raises:
     """Test parse → write → parse produces same result."""
     var original_ini = """[Database]
 host = localhost
@@ -125,7 +125,7 @@ timeout = 30"""
     assert_equal(data1["Server"]["timeout"], data2["Server"]["timeout"])
 
 
-fn test_roundtrip_with_special_chars() raises:
+def test_roundtrip_with_special_chars() raises:
     """Test roundtrip with special characters in values."""
     var data1 = Dict[String, Dict[String, String]]()
     data1["Test"] = Dict[String, String]()
@@ -143,7 +143,7 @@ fn test_roundtrip_with_special_chars() raises:
     assert_equal(data1["Test"]["path"], data2["Test"]["path"])
 
 
-fn test_empty_values() raises:
+def test_empty_values() raises:
     """Test writing empty string values."""
     var data = Dict[String, Dict[String, String]]()
     data["Test"] = Dict[String, String]()
@@ -156,6 +156,6 @@ fn test_empty_values() raises:
     assert_true("normal_key = value" in ini_text, "Should have normal value")
 
 
-fn main() raises:
+def main() raises:
     """Run all writer tests using TestSuite."""
     TestSuite.discover_tests[__functions_in_module()]().run()

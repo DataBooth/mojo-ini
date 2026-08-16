@@ -37,7 +37,7 @@ raw characters, making INI syntax rules easier to implement.
 from std.collections import List
 
 
-fn to_chars(text: String) -> List[String]:
+def to_chars(text: String) -> List[String]:
     """Convert a String into a list of single-codepoint Strings."""
     var chars = List[String]()
     for slice in text.codepoint_slices():
@@ -54,11 +54,11 @@ struct Position(Copyable, Movable):
     var line: Int
     var column: Int
 
-    fn __init__(out self, line: Int, column: Int):
+    def __init__(out self, line: Int, column: Int):
         self.line = line
         self.column = column
 
-    fn copy(self) -> Self:
+    def copy(self) -> Self:
         return Position(self.line, self.column)
 
 
@@ -69,64 +69,64 @@ struct TokenKind(Copyable, Movable):
     """
     var _value: Int
 
-    fn __init__(out self, value: Int):
+    def __init__(out self, value: Int):
         self._value = value
 
-    fn copy(self) -> Self:
+    def copy(self) -> Self:
         return TokenKind(self._value)
 
     # Special tokens
     @staticmethod
-    fn EOF() -> TokenKind:
+    def EOF() -> TokenKind:
         """End of file marker."""
         return TokenKind(0)
 
     @staticmethod
-    fn NEWLINE() -> TokenKind:
+    def NEWLINE() -> TokenKind:
         """Line break (separates key-value pairs)."""
         return TokenKind(1)
 
     @staticmethod
-    fn COMMENT() -> TokenKind:
+    def COMMENT() -> TokenKind:
         """Comment text after # or ; symbol."""
         return TokenKind(2)
 
     # Structural elements
     @staticmethod
-    fn SECTION() -> TokenKind:
+    def SECTION() -> TokenKind:
         """Section header: [section_name]."""
         return TokenKind(10)
 
     @staticmethod
-    fn KEY() -> TokenKind:
+    def KEY() -> TokenKind:
         """Key name before = or :."""
         return TokenKind(11)
 
     @staticmethod
-    fn VALUE() -> TokenKind:
+    def VALUE() -> TokenKind:
         """Value after = or :."""
         return TokenKind(12)
 
     # Punctuation
     @staticmethod
-    fn EQUALS() -> TokenKind:
+    def EQUALS() -> TokenKind:
         """Assignment operator: = or :."""
         return TokenKind(20)
 
     @staticmethod
-    fn LEFT_BRACKET() -> TokenKind:
+    def LEFT_BRACKET() -> TokenKind:
         """Section start: [."""
         return TokenKind(21)
 
     @staticmethod
-    fn RIGHT_BRACKET() -> TokenKind:
+    def RIGHT_BRACKET() -> TokenKind:
         """Section end: ]."""
         return TokenKind(22)
 
-    fn __eq__(self, other: TokenKind) -> Bool:
+    def __eq__(self, other: TokenKind) -> Bool:
         return self._value == other._value
 
-    fn __ne__(self, other: TokenKind) -> Bool:
+    def __ne__(self, other: TokenKind) -> Bool:
         return self._value != other._value
 
 
@@ -140,12 +140,12 @@ struct Token(Copyable, Movable):
     var value: String  # The actual text content
     var pos: Position  # Where it appears in the file
 
-    fn __init__(out self, kind: TokenKind, value: String, pos: Position):
+    def __init__(out self, kind: TokenKind, value: String, pos: Position):
         self.kind = kind.copy()
         self.value = value
         self.pos = pos.copy()
 
-    fn copy(self) -> Self:
+    def copy(self) -> Self:
         """Create a copy of this token."""
         return Token(self.kind.copy(), self.value, self.pos.copy())
 
@@ -172,7 +172,7 @@ struct Lexer:
     var line: Int     # Current line number (1-indexed)
     var column: Int   # Current column number (1-indexed)
 
-    fn __init__(out self, input: String):
+    def __init__(out self, input: String):
         """Initialise lexer with INI input.
 
         Args:
@@ -184,7 +184,7 @@ struct Lexer:
         self.line = 1
         self.column = 1
 
-    fn current(self) -> String:
+    def current(self) -> String:
         """Get current character without advancing.
 
         Returns:
@@ -194,7 +194,7 @@ struct Lexer:
             return ""
         return self.chars[self.pos]
 
-    fn peek(self, offset: Int = 1) -> String:
+    def peek(self, offset: Int = 1) -> String:
         """Look ahead at character without consuming it.
 
         Args:
@@ -208,7 +208,7 @@ struct Lexer:
             return ""
         return self.chars[peek_pos]
 
-    fn advance(mut self) -> String:
+    def advance(mut self) -> String:
         """Consume and return current character.
 
         Advances position and updates line/column tracking for error messages.
@@ -230,7 +230,7 @@ struct Lexer:
 
         return c
 
-    fn skip_whitespace(mut self):
+    def skip_whitespace(mut self):
         """Skip whitespace characters (space, tab) but not newlines.
 
         Newlines are significant in INI for separating key-value pairs.
@@ -242,7 +242,7 @@ struct Lexer:
             else:
                 break
 
-    fn read_comment(mut self) raises -> Token:
+    def read_comment(mut self) raises -> Token:
         """Read a comment starting with # or ;.
 
         Comments run from # (or ;) to end of line.
@@ -264,7 +264,7 @@ struct Lexer:
         # Trim leading/trailing whitespace from comment
         return Token(TokenKind.COMMENT(), String(comment.strip()), start_pos)
 
-    fn read_section(mut self) raises -> Token:
+    def read_section(mut self) raises -> Token:
         """Read a section header [section_name].
 
         Returns:
@@ -289,7 +289,7 @@ struct Lexer:
 
         raise Error("Unclosed section header at end of file")
 
-    fn read_key(mut self) raises -> Token:
+    def read_key(mut self) raises -> Token:
         """Read a key name until = or :.
 
         Returns:
@@ -306,7 +306,7 @@ struct Lexer:
 
         return Token(TokenKind.KEY(), String(key.strip()), start_pos)
 
-    fn read_value(mut self) raises -> Token:
+    def read_value(mut self) raises -> Token:
         """Read a value after = or :.
 
         Handles inline comments (# or ; at end of line).
@@ -328,7 +328,7 @@ struct Lexer:
 
         return Token(TokenKind.VALUE(), String(value.strip()), start_pos)
 
-    fn tokenize(mut self) raises -> List[Token]:
+    def tokenize(mut self) raises -> List[Token]:
         """Tokenise the entire INI input.
 
         Returns:
@@ -348,7 +348,7 @@ struct Lexer:
 
             self.skip_whitespace()
 
-            if self.pos >= len(self.input):
+            if self.pos >= len(self.chars):
                 break
 
             var c = self.current()
@@ -375,7 +375,7 @@ struct Lexer:
                 _ = self.advance()
                 # After equals, skip whitespace and read value
                 self.skip_whitespace()
-                if self.pos < len(self.input) and self.current() != "\n" and self.current() != "#" and self.current() != ";":
+                if self.pos < len(self.chars) and self.current() != "\n" and self.current() != "#" and self.current() != ";":
                     tokens.append(self.read_value())
                 at_line_start = False
 

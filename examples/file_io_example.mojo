@@ -8,7 +8,7 @@ Run with: mojo -I src examples/file_io_example.mojo
 from ini import parse_file, write_file
 
 
-fn main() raises:
+def main() raises:
     # Read an existing INI file
     print("Reading fixtures/sample.ini...")
     var config = parse_file("fixtures/sample.ini")

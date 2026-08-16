@@ -46,7 +46,7 @@ struct Parser:
     var tokens: List[Token]
     var pos: Int  # Current position in token list
 
-    fn __init__(out self, var tokens: List[Token]):
+    def __init__(out self, var tokens: List[Token]):
         """Initialize parser with token list.
 
         Args:
@@ -55,7 +55,7 @@ struct Parser:
         self.tokens = tokens^
         self.pos = 0
 
-    fn current(self) -> Token:
+    def current(self) -> Token:
         """Get current token without advancing.
 
         Returns:
@@ -65,22 +65,22 @@ struct Parser:
             return self.tokens[len(self.tokens) - 1].copy()  # Return EOF
         return self.tokens[self.pos].copy()
 
-    fn advance(mut self):
+    def advance(mut self):
         """Move to next token."""
         if self.pos < len(self.tokens):
             self.pos += 1
 
-    fn skip_newlines(mut self):
+    def skip_newlines(mut self):
         """Skip any NEWLINE tokens."""
         while self.pos < len(self.tokens) and self.current().kind == TokenKind.NEWLINE():
             self.advance()
 
-    fn skip_comments(mut self):
+    def skip_comments(mut self):
         """Skip any COMMENT tokens."""
         while self.pos < len(self.tokens) and self.current().kind == TokenKind.COMMENT():
             self.advance()
 
-    fn collect_multiline_value(mut self, initial_value: String) -> String:
+    def collect_multiline_value(mut self, initial_value: String) -> String:
         """Collect multiline value from continuation lines.
 
         Continuation lines are VALUE tokens that appear after NEWLINE/COMMENT
@@ -111,7 +111,7 @@ struct Parser:
 
         return result
 
-    fn parse(mut self) raises -> Dict[String, Dict[String, String]]:
+    def parse(mut self) raises -> Dict[String, Dict[String, String]]:
         """Parse tokens into nested dictionary structure.
 
         Returns:
@@ -177,7 +177,7 @@ struct Parser:
         return result^
 
 
-fn parse(content: String) raises -> Dict[String, Dict[String, String]]:
+def parse(content: String) raises -> Dict[String, Dict[String, String]]:
     """Parse INI string into nested dictionary.
 
     This is a convenience function that handles lexing and parsing in one step.

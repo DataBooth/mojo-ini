@@ -8,9 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- Bumped MAX / Mojo toolchain dependency to `max ">=26.1.0,<27"` and updated recipes to pin `mojo_version = "=0.26.1"`.
-- Updated the INI lexer to use `codepoint_slices()` and a cached `List[String]` buffer instead of direct `String` indexing, matching Mojo 0.26.1 `__getitem__` semantics while preserving existing behaviour.
-- Adopted a "no warnings" policy for the core library and tests so future migrations surface only new issues.
+- Migrated workspace/runtime dependencies and recipe compiler pins to Mojo `1.0.0`.
+- Updated source/tests/examples/packaging from legacy `fn` syntax to Mojo 1.0-compatible `def` declarations.
+- Corrected latent Mojo 1.0 string/character handling issues, including lexer bounds checks (`len(self.chars)` over `len(self.input)`) and string-length assertions via `byte_length()`.
+- Revalidated migration with `pixi run test-all` (all 5 suites passing) and `pixi run build-package` (success with warnings only).
 
 ## [0.2.0] - 2026-01-13
 

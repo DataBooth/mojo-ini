@@ -8,11 +8,11 @@ Tests tokenisation of INI syntax elements:
 - Error cases
 """
 
-from testing import assert_equal, assert_true, TestSuite
+from std.testing import assert_equal, assert_true, TestSuite
 from ini.lexer import Lexer, Token, TokenKind, Position
 
 
-fn test_empty_input() raises:
+def test_empty_input() raises:
     """Test lexing empty string."""
     var lexer = Lexer("")
     var tokens = lexer.tokenize()
@@ -21,7 +21,7 @@ fn test_empty_input() raises:
     assert_true(tokens[0].kind == TokenKind.EOF(), "Should be EOF")
 
 
-fn test_simple_section() raises:
+def test_simple_section() raises:
     """Test lexing a section header."""
     var lexer = Lexer("[Database]")
     var tokens = lexer.tokenize()
@@ -32,7 +32,7 @@ fn test_simple_section() raises:
     assert_true(tokens[1].kind == TokenKind.EOF(), "Second token should be EOF")
 
 
-fn test_key_value_equals() raises:
+def test_key_value_equals() raises:
     """Test lexing key = value."""
     var lexer = Lexer("host = localhost")
     var tokens = lexer.tokenize()
@@ -47,7 +47,7 @@ fn test_key_value_equals() raises:
     assert_true(tokens[3].kind == TokenKind.EOF(), "Fourth should be EOF")
 
 
-fn test_hash_comment() raises:
+def test_hash_comment() raises:
     """Test lexing # style comment."""
     var lexer = Lexer("# This is a comment")
     var tokens = lexer.tokenize()
@@ -57,7 +57,7 @@ fn test_hash_comment() raises:
     assert_equal(tokens[0].value, "This is a comment", "Comment text should match")
 
 
-fn test_semicolon_comment() raises:
+def test_semicolon_comment() raises:
     """Test lexing ; style comment."""
     var lexer = Lexer("; Windows-style comment")
     var tokens = lexer.tokenize()
@@ -67,7 +67,7 @@ fn test_semicolon_comment() raises:
     assert_equal(tokens[0].value, "Windows-style comment", "Comment text should match")
 
 
-fn test_section_with_newline() raises:
+def test_section_with_newline() raises:
     """Test section followed by newline."""
     var lexer = Lexer("[Server]\n")
     var tokens = lexer.tokenize()
@@ -78,7 +78,7 @@ fn test_section_with_newline() raises:
     assert_true(tokens[1].kind == TokenKind.NEWLINE(), "Second should be NEWLINE")
 
 
-fn test_position_tracking() raises:
+def test_position_tracking() raises:
     """Test that positions are tracked correctly."""
     var lexer = Lexer("[Test]")
     var tokens = lexer.tokenize()
@@ -87,7 +87,7 @@ fn test_position_tracking() raises:
     assert_equal(tokens[0].pos.column, 1, "Should start at column 1")
 
 
-fn test_unclosed_section_error() raises:
+def test_unclosed_section_error() raises:
     """Test error on unclosed section."""
     var lexer = Lexer("[Unclosed")
 
@@ -99,7 +99,7 @@ fn test_unclosed_section_error() raises:
         pass
 
 
-fn test_multiline_ini() raises:
+def test_multiline_ini() raises:
     """Test lexing multiple lines."""
     var input = """[Database]
 host = localhost
@@ -114,6 +114,6 @@ port = 5432"""
     assert_true(tokens[0].kind == TokenKind.SECTION(), "First should be SECTION")
 
 
-fn main() raises:
+def main() raises:
     """Run all lexer tests using TestSuite."""
     TestSuite.discover_tests[__functions_in_module()]().run()

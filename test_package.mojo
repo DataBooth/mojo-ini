@@ -1,6 +1,6 @@
 from ini import parse, to_ini
 
-fn main() raises:
+def main() raises:
     # Parse a simple INI string
     var cfg = parse("""
 [App]

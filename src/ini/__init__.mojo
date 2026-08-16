@@ -28,7 +28,7 @@ from .parser import parse as _parse
 from .writer import to_ini as _to_ini
 
 
-fn parse(content: String) raises -> Dict[String, Dict[String, String]]:
+def parse(content: String) raises -> Dict[String, Dict[String, String]]:
     """Parse INI string into nested dictionary.
 
     The ``content`` parameter is an INI formatted string.
@@ -54,7 +54,7 @@ fn parse(content: String) raises -> Dict[String, Dict[String, String]]:
     return _parse(content)
 
 
-fn to_ini(data: Dict[String, Dict[String, String]]) raises -> String:
+def to_ini(data: Dict[String, Dict[String, String]]) raises -> String:
     """Convert nested dictionary to INI format string.
 
     The ``data`` argument is a dict mapping section names to key-value pairs.
@@ -77,7 +77,7 @@ fn to_ini(data: Dict[String, Dict[String, String]]) raises -> String:
     return _to_ini(data)
 
 
-fn parse_file(path: String) raises -> Dict[String, Dict[String, String]]:
+def parse_file(path: String) raises -> Dict[String, Dict[String, String]]:
     """Parse INI file into nested dictionary.
 
     The ``path`` parameter is the path to the INI file.
@@ -100,7 +100,7 @@ fn parse_file(path: String) raises -> Dict[String, Dict[String, String]]:
         return _parse(content)
 
 
-fn write_file(path: String, data: Dict[String, Dict[String, String]]) raises:
+def write_file(path: String, data: Dict[String, Dict[String, String]]) raises:
     """Write nested dictionary to INI file.
 
     The ``path`` parameter is the path to the output INI file.

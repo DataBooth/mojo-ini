@@ -9,11 +9,11 @@ Tests parsing of INI syntax into nested dictionaries:
 - Empty values
 """
 
-from testing import assert_equal, assert_true, TestSuite
+from std.testing import assert_equal, assert_true, TestSuite
 from ini.parser import parse
 
 
-fn test_empty_ini() raises:
+def test_empty_ini() raises:
     """Test parsing empty INI."""
     var data = parse("")
 
@@ -22,7 +22,7 @@ fn test_empty_ini() raises:
     assert_equal(len(data[""]), 0, "Default section should be empty")
 
 
-fn test_single_section_single_key() raises:
+def test_single_section_single_key() raises:
     """Test parsing single section with one key."""
     var data = parse("[Database]\nhost = localhost")
 
@@ -31,7 +31,7 @@ fn test_single_section_single_key() raises:
     assert_equal(data["Database"]["host"], "localhost", "Value should be 'localhost'")
 
 
-fn test_single_section_multiple_keys() raises:
+def test_single_section_multiple_keys() raises:
     """Test parsing section with multiple keys."""
     var input = """[Server]
 host = 0.0.0.0
@@ -46,7 +46,7 @@ debug = true"""
     assert_equal(data["Server"]["debug"], "true", "debug should be 'true'")
 
 
-fn test_multiple_sections() raises:
+def test_multiple_sections() raises:
     """Test parsing multiple sections."""
     var input = """[Database]
 host = localhost
@@ -62,7 +62,7 @@ port = 8080"""
     assert_equal(data["Server"]["port"], "8080")
 
 
-fn test_keys_without_section() raises:
+def test_keys_without_section() raises:
     """Test parsing keys before any [section] header."""
     var input = """key1 = value1
 key2 = value2
@@ -79,7 +79,7 @@ key3 = value3"""
     assert_equal(data["Section"]["key3"], "value3", "key3 should be in Section")
 
 
-fn test_empty_value() raises:
+def test_empty_value() raises:
     """Test parsing key with empty value."""
     var data = parse("[Test]\nkey =")
 
@@ -88,7 +88,7 @@ fn test_empty_value() raises:
     assert_equal(data["Test"]["key"], "", "Value should be empty string")
 
 
-fn test_comments_ignored() raises:
+def test_comments_ignored() raises:
     """Test that comments are ignored."""
     var input = """# This is a comment
 [Server]
@@ -103,7 +103,7 @@ port = 8080"""
     assert_equal(data["Server"]["port"], "8080", "port should be '8080'")
 
 
-fn test_whitespace_trimming() raises:
+def test_whitespace_trimming() raises:
     """Test that whitespace is trimmed from keys and values."""
     var input = """[Test]
 key1   =   value1
@@ -117,7 +117,7 @@ key3  :  value3"""
     assert_equal(data["Test"]["key3"], "value3", "Whitespace around : should be trimmed")
 
 
-fn test_duplicate_key_error() raises:
+def test_duplicate_key_error() raises:
     """Test that duplicate keys in same section raise error."""
     var input = """[Test]
 key = value1
@@ -131,7 +131,7 @@ key = value2"""
         pass
 
 
-fn test_colon_separator() raises:
+def test_colon_separator() raises:
     """Test parsing with : instead of =."""
     var input = """[Test]
 key1: value1
@@ -143,6 +143,6 @@ key2: value2"""
     assert_equal(data["Test"]["key2"], "value2", "Colon separator should work")
 
 
-fn main() raises:
+def main() raises:
     """Run all parser tests using TestSuite."""
     TestSuite.discover_tests[__functions_in_module()]().run()
